@@ -7,7 +7,7 @@ class Logger:
             level=level,
             format='%(asctime)s - %(levelname)s - %(message)s',
             filename=log_file,
-            filemode='a'  # Set to 'a' for append mode
+            filemode='w'  # Set to 'a' for append mode
         )
         self.logger = logging.getLogger()
 
