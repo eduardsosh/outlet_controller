@@ -1,7 +1,11 @@
+"""
+Module to provide logging capabilities
+"""
+
 import logging
 
 class Logger:
-    def __init__(self, log_file='app.log', level=logging.DEBUG):
+    def __init__(self, log_file='app.log', level=logging.INFO):
         # Configure logging
         logging.basicConfig(
             level=level,
@@ -9,7 +13,7 @@ class Logger:
             filename=log_file,
             filemode='w'  # Set to 'a' for append mode
         )
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger(__name__)
 
     def debug(self, message):
         self.logger.debug(message)
