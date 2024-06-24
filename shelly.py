@@ -9,7 +9,8 @@ import requests
 import time
 import json
 
-import solar_logger
+import logging
+logger = logging.getLogger(__name__)
 
 CLOUD_STATUS = "https://shelly-111-eu.shelly.cloud/device/status"
 CLOUD_POWER = "https://shelly-111-eu.shelly.cloud/device/relay/control"
@@ -18,7 +19,7 @@ CLOUD_POWER = "https://shelly-111-eu.shelly.cloud/device/relay/control"
 
 
 
-class ShellyCloud(object):
+class ShellyPlug(object):
     API_KEY = os.environ.get("SHELLY_API_KEY")
     PLUG_ID = os.environ.get("SHELLY_PLUG_ID")
     
@@ -34,18 +35,17 @@ class ShellyCloud(object):
             response.raise_for_status()
 
             data = response.text
-        except requests.exceptions.HTTPError as http_err:
-            print(f'HTTPs error occurred: {http_err}')
+
         except Exception as err:
-            print(f'Other error occurred: {err}')
+            logger.error(f'Other error occurred: {err}')
+            return
             
         return data
     
     @classmethod
     def relay(self, power):
-        """
-        power = <'on'|'off'>
-        """
+        """Power: <'on'|'off'>"""
+
         payload = {
             'channel' : '0',
             'turn' : power,
@@ -57,12 +57,35 @@ class ShellyCloud(object):
             response = requests.post(CLOUD_POWER,data=payload)
             response.raise_for_status()
         except requests.exceptions.HTTPError as http_err:
-            print(f'HTTPs error occurred: {http_err}')
+            logger.error(f'HTTPs error occurred: {http_err}')
             return -1
         except Exception as err:
-            print(f'Other error occurred: {err}')
+            logger.error(f'Other error occurred: {err}')
             return -1
             
         return 0
+    
+    @classmethod
+    def is_online(self):
+        return self.__get_info("data.online")
+    
+    @classmethod
+    def is_powered(self):
+        return self.__get_info("data.device_status.relays.0.ison")
+    
+    @classmethod
+    def __get_info(self,option):
+        data = self.get_status()  # Get the status from the ShellyPlug
+        data_json = json.loads(data)
+        
+        keys = option.split(".")  # Split the option by periods
+        
+        value = data_json
+        for key in keys:
+            if key.isdigit():  # Check if the key is an index for a list
+                key = int(key)  # Convert the key to an integer index
+            value = value[key]
+        
+        return value
             
         

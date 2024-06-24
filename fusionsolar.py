@@ -13,25 +13,25 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 
 import os
-import solar_logger
+import logging
 
 import threading
 import time
 
+logger = logging.getLogger(__name__)
+
+
 class KioskApp:
     def __init__(self, DEBUG=False): 
-        self.logger = solar_logger.Logger()
-        
+
         # Get environment variables and check their existance
         self.kiosk_link = os.environ.get('SOLAR_LINK')
         self.station_name = os.environ.get('STATION_NAME')
         
         if not self.kiosk_link:
-            print("Error: Missing solar url!")
-            return
+            logger.error("Missing solar url")
         if not self.station_name:
-            print("Error: Missing station name!")
-            return
+            logger.error("Missing station name")
         
         self.active = threading.Event()
         self.loaded = threading.Event()
@@ -43,7 +43,7 @@ class KioskApp:
         
 
     def start_browser(self):
-        self.logger.info("Starting driver")
+        logger.info("Starting driver")
 
         options = Options()
         options.add_argument("--headless")
@@ -57,9 +57,9 @@ class KioskApp:
             while self.active.is_set():
                 time.sleep(1)
         except Exception as e:
-            self.logger.error(f"Error in browser thread: {e}")
+            logger.error(f"Error in browser thread: {e}")
         finally:
-            self.logger.info("Stopping driver")
+            logger.info("Stopping driver")
             self.driver.quit()
 
     def get_prod(self):
@@ -73,13 +73,13 @@ class KioskApp:
                 production_kw = float(production_kw)
                 return production_kw
         except Exception as e:
-            self.logger.error(f"Cannot get recent data: {e}")
+            logger.error(f"Cannot get recent data: {e}")
             return None
         
     
 
     def stop_browser(self):
-        self.logger.info("Stopping driver")
+        logger.info("Stopping driver")
         self.active.clear()
         self.driver_thread.join()
         
