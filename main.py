@@ -1,16 +1,15 @@
 
 # Set up logging
 import logging
-from solar_logger import setup_logging
+from controller.solar_logger import setup_logging
 setup_logging()
 logger = logging.getLogger(__name__)
 
 
 
-import shelly
-import fusionsolar
-import time
-import json
+import controller.shelly as shelly
+import controller.fusionsolar as fusionsolar
+
 
 global counter
 
@@ -22,26 +21,11 @@ logging.getLogger('selenium.webdriver.remote.remote_connection').setLevel(loggin
 
 
 def main():
-    print(shelly.ShellyPlug.is_online())
-    # logger.info(shelly_control.ShellyPlug().get_status())
-    
-    # kioskapp = fusionsolar.KioskApp()
-    # while not kioskapp.has_loaded():
-    #     logger.info("Starting selenium!")
-    #     time.sleep(1)
-        
-    # while True:
-    #     print(kioskapp.get_prod())
-    #     if is_within_params(kioskapp.get_prod()):
-    #         #shelly_control.ShellyPlug().relay('on')
-    #         print("Turn on")
-    #     else:
-    #         #shelly_control.ShellyPlug().relay('off')
-    #         print("Turn off")
 
+    with fusionsolar.KioskApp() as app:
+        app.get_prod()
         
-    #     # Sleep 5 minutes
-    #     time.sleep(900)
+
         
 
 def is_within_params(curr_prod):

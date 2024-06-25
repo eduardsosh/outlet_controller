@@ -64,6 +64,8 @@ class KioskApp:
 
     def get_prod(self):
         try:
+            self.loaded.wait()
+
             if self.driver and self.active.is_set():
                 self.driver.get(self.kiosk_link)
                 WebDriverWait(self.driver, 20).until(EC.text_to_be_present_in_element((By.CLASS_NAME, "station-name"),self.station_name))
@@ -88,6 +90,12 @@ class KioskApp:
     
     def has_loaded(self):
         return self.loaded.is_set()
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.stop_browser()
 
 
 
