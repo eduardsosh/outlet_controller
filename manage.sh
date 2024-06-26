@@ -30,10 +30,17 @@ install_script() {
     # Ensure script is executable
     chmod +x "$SCRIPT_PATH"
 
-    # Deactivate virtual environment
-    deactivate
+    
 
-    echo "Installation complete."
+    # Deactivate virtual environment
+    
+
+    echo "Installation complete. Cron job added! Use <manage.sh stop> to stop"
+
+    python3 $SCRIPT_PATH
+
+    
+    deactivate
 }
 
 # Function to start the cron job (no action needed, as cron will automatically start)
@@ -52,14 +59,11 @@ case "$1" in
     install)
         install_script
         ;;
-    start)
-        echo "Nothing to do for starting the script (handled by cron)."
-        ;;
     stop)
         stop_script
         ;;
     *)
-        echo "Usage: $0 {install|start|stop}"
+        echo "Usage: $0 {install/start | stop}"
         exit 1
         ;;
 esac
