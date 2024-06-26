@@ -23,7 +23,8 @@ logging.getLogger('selenium.webdriver.remote.remote_connection').setLevel(loggin
 def main():
 
     with fusionsolar.KioskApp() as app:
-        app.get_prod()
+        pass
+
         
 
         
