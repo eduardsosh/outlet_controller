@@ -39,7 +39,7 @@ install_script() {
 
     python3 $SCRIPT_PATH
 
-    
+
     deactivate
 }
 
@@ -56,14 +56,14 @@ stop_script() {
 
 # Handle command line arguments
 case "$1" in
-    install)
+    start)
         install_script
         ;;
     stop)
         stop_script
         ;;
     *)
-        echo "Usage: $0 {install/start | stop}"
+        echo "Usage: $0 {start | stop}"
         exit 1
         ;;
 esac
